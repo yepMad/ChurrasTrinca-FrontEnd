@@ -77,7 +77,6 @@ const Party: React.FC = () => {
 
   const [title, setTitle] = useState('');
   const [date, setDate] = useState(Date.now());
-  const [countUsers, setCountUsers] = useState(0);
   const [partyUsers, setPartyUsers] = useState<PartyUser[]>([]);
   const [ownerId, setOwnerId] = useState('');
   const [isOwner, setIsOwner] = useState(false);
@@ -95,7 +94,6 @@ const Party: React.FC = () => {
         setTitle(data.party_infos.title);
         setOwnerId(data.party_infos.owner_id);
         setDate(data.party_infos.date_timestamp);
-        setCountUsers(data.party_infos.count_users);
         setPartyUsers(data.party_users);
         setIsOwner(data.is_owner);
 
@@ -162,7 +160,7 @@ const Party: React.FC = () => {
             <ResumeContainer>
               <InfoContainer>
                 <IconPeople />
-                <InfoText>{countUsers}</InfoText>
+                <InfoText>{partyUsers.length}</InfoText>
               </InfoContainer>
               <InfoContainer>
                 <IconMoney />
