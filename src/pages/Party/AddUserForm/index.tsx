@@ -103,6 +103,7 @@ const AddUserForm: React.FC<Props> = ({
         );
 
         onNewUserAdded(response.data);
+        close();
       } catch (error) {
         if (error instanceof Yup.ValidationError) {
           const errors = getValidationErrors(error);
@@ -119,7 +120,7 @@ const AddUserForm: React.FC<Props> = ({
         setIsLoading(false);
       }
     },
-    [addPopup, partyId, api, getRequestConfig, onNewUserAdded],
+    [addPopup, partyId, api, getRequestConfig, onNewUserAdded, close],
   );
 
   return (
