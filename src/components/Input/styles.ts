@@ -10,7 +10,7 @@ interface ContainerProps {
 
 export const Container = styled.div<ContainerProps>`
   background: #ffffff;
-  border-radius: 5px;
+  border-radius: 2px;
 
   width: 100%;
 
@@ -22,6 +22,8 @@ export const Container = styled.div<ContainerProps>`
 
   transition: color 0.2s;
   transition: border-color 0.2s;
+
+  box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.06);
 
   & + div {
     margin-top: 8px;
