@@ -127,11 +127,6 @@ export const UsersContainer = styled.div`
   margin-top: 50px;
 `;
 
-export const LoadingContainer = styled.div`
-  display: flex;
-  justify-content: center;
-`;
-
 export const BackButtonContainer = styled.div`
   margin-top: 20px;
 
@@ -145,4 +140,18 @@ export const BackButtonContainer = styled.div`
       margin-right: 10px;
     }
   }
+`;
+
+export const AddUserContainer = styled.button`
+  display: flex;
+
+  margin: 0 auto;
+
+  border: 0;
+  background: none;
+`;
+
+export const AddUserText = styled.p`
+  font-weight: bold;
+  margin-left: 20px;
 `;

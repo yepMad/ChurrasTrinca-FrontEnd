@@ -11,6 +11,7 @@ import getCurrencyFormatted from '../../utils/getCurrencyFormatted';
 import GenericPage from '../../components/GenericPage';
 
 import EditUser from './EditUser';
+import { Line } from './UserItem/styles';
 
 import {
   Content,
@@ -25,9 +26,12 @@ import {
   InfoContainer,
   InfoText,
   UsersContainer,
-  LoadingContainer,
+  AddUserContainer,
+  AddUserText,
   BackButtonContainer,
 } from './styles';
+
+import AddUserForm from './AddUserForm';
 
 import { ReactComponent as IconPeople } from '../../assets/icon_people.svg';
 import { ReactComponent as IconMoney } from '../../assets/icon_money.svg';
@@ -79,6 +83,7 @@ const Party: React.FC = () => {
   const { getRequestConfig } = useAuth();
 
   const [loading, setLoading] = useState(false);
+  const [isAddingUser, setIsAddingUser] = useState(false);
   const [editingUser, setEditingUser] = useState<EditingUser | null>(null);
 
   const [title, setTitle] = useState('');
@@ -150,6 +155,10 @@ const Party: React.FC = () => {
     });
   }, []);
 
+  const onNewUserAdded = useCallback((data: PartyUser) => {
+    setPartyUsers(oldState => [...oldState, data]);
+  }, []);
+
   if (loading) {
     return (
       <GenericPage title="Agenda de Churras">
@@ -189,6 +198,12 @@ const Party: React.FC = () => {
           </HeaderContainer>
 
           <UsersContainer>
+            <AddUserContainer onClick={() => setIsAddingUser(true)}>
+              <IconPeople />
+              <AddUserText>Adicionar novo participante</AddUserText>
+            </AddUserContainer>
+            <Line />
+
             {partyUsers.map(i => (
               <UserItem
                 key={i.id}
@@ -224,6 +239,14 @@ const Party: React.FC = () => {
           partyUserId={editingUser.partyUserId}
           initialGeneralValue={editingUser.initialGeneralValue}
           initialDrinksValue={editingUser.initialDrinksValue}
+        />
+      )}
+
+      {isAddingUser && (
+        <AddUserForm
+          partyId={partyId}
+          onNewUserAdded={onNewUserAdded}
+          close={() => setIsAddingUser(false)}
         />
       )}
     </>

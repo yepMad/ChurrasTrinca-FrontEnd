@@ -1,55 +1,50 @@
 import React, { useRef, useCallback, useState } from 'react';
-import { BiDrink } from 'react-icons/bi';
+import axios from 'axios';
+
 import { FormHandles } from '@unform/core';
-import { IoFastFoodOutline } from 'react-icons/io5';
 import * as Yup from 'yup';
-
-import GenericPopup from '../../../components/GenericPopup';
-import CurrencyInput from '../../../components/CurrencyInput';
-import Button from '../../../components/GenericPopup/addons/Button';
-
-import getValidationErrors from '../../../utils/getValidationErrors';
 
 import { useApi } from '../../../hooks/api';
 import { useAuth } from '../../../hooks/auth';
 import { usePopup } from '../../../hooks/popup';
 
-import { PartyUser, EditingUser } from '..';
+import getValidationErrors from '../../../utils/getValidationErrors';
 
-import {
-  EditTitle,
-  EditFormContent,
-  EditInputBox,
-  EditInputLabel,
-} from './styles';
+import Input from '../../../components/Input';
+import CurrencyInput from '../../../components/CurrencyInput';
+import GenericPopup from '../../../components/GenericPopup';
+import Button from '../../../components/GenericPopup/addons/Button';
 
-interface Props extends EditingUser {
+import { PartyUser } from '..';
+
+import { Text, InputBox, InputsContainer } from './styles';
+
+interface Props {
+  partyId: string;
+
+  onNewUserAdded: (data: PartyUser) => void;
   close: () => void;
-  onStateUpdate: (data: PartyUser) => void;
 }
 
 interface FormData {
+  inviteUserEmail: string;
   generalValue: string;
   drinksValue: string;
 }
 
-const EditUser: React.FC<Props> = (props: Props) => {
-  const {
-    partyUserId,
-    userName,
-    initialDrinksValue,
-    initialGeneralValue,
-    close,
-    onStateUpdate,
-  } = props;
-
-  const { api } = useApi();
-  const { getRequestConfig } = useAuth();
-  const { addPopup } = usePopup();
+const AddUserForm: React.FC<Props> = ({
+  partyId,
+  close,
+  onNewUserAdded,
+}: Props) => {
+  const formRef = useRef<FormHandles>(null);
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const formRef = useRef<FormHandles>(null);
+  const { api } = useApi();
+  const { addPopup } = usePopup();
+  const { getRequestConfig } = useAuth();
+
   const handleSubmit = useCallback(
     async (data: FormData) => {
       try {
@@ -57,6 +52,9 @@ const EditUser: React.FC<Props> = (props: Props) => {
         formRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
+          inviteUserEmail: Yup.string()
+            .email()
+            .required('Insira um e-mail válido!'),
           generalValue: Yup.string().required(
             'O valor geral precisa ser maior ou igual a zero',
           ),
@@ -93,27 +91,25 @@ const EditUser: React.FC<Props> = (props: Props) => {
           );
         }
 
-        const res = await api().put<PartyUser>(
-          `/parties/users/${partyUserId}`,
+        const response = await api().post<PartyUser>(
+          '/parties/users',
           {
+            party_id: partyId,
+            invite_user_email: data.inviteUserEmail,
             general_value: generalValue,
             drinks_value: drinksValue,
-            itsPaid: false,
           },
           getRequestConfig(),
         );
 
-        onStateUpdate(res.data);
-        close();
+        onNewUserAdded(response.data);
       } catch (error) {
         if (error instanceof Yup.ValidationError) {
           const errors = getValidationErrors(error);
-
           formRef.current?.setErrors(errors);
-          return;
         }
 
-        if (error instanceof Error) {
+        if (error instanceof Error && !axios.isAxiosError(error)) {
           addPopup({
             description: error.message,
             type: 'error',
@@ -123,38 +119,42 @@ const EditUser: React.FC<Props> = (props: Props) => {
         setIsLoading(false);
       }
     },
-    [addPopup, api, getRequestConfig, onStateUpdate, partyUserId, close],
+    [addPopup, partyId, api, getRequestConfig, onNewUserAdded],
   );
 
   return (
-    <GenericPopup isLoading={isLoading} onClickOutside={() => close()}>
-      <EditTitle>{userName}</EditTitle>
-
-      <EditFormContent ref={formRef} onSubmit={handleSubmit}>
-        <EditInputBox>
-          <EditInputLabel>Valor geral</EditInputLabel>
+    <GenericPopup isLoading={isLoading} onClickOutside={close}>
+      <Text>Racha a conta!</Text>
+      <InputsContainer ref={formRef} onSubmit={handleSubmit}>
+        <InputBox>
+          <Input
+            type="email"
+            name="inviteUserEmail"
+            placeholder="e-mail do participante"
+            disabled={isLoading}
+          />
+        </InputBox>
+        <InputBox>
           <CurrencyInput
             name="generalValue"
-            Icon={IoFastFoodOutline}
-            defaultValue={initialGeneralValue}
+            defaultValue="0,00"
             disabled={isLoading}
             decimalScale={2}
           />
-        </EditInputBox>
-        <EditInputBox>
-          <EditInputLabel>Valor dos drinks</EditInputLabel>
+        </InputBox>
+        <InputBox>
           <CurrencyInput
             name="drinksValue"
-            Icon={BiDrink}
-            defaultValue={initialDrinksValue}
+            defaultValue="0,00"
             disabled={isLoading}
             decimalScale={2}
           />
-        </EditInputBox>
-        <Button isLoading={isLoading} text="salvar" />
-      </EditFormContent>
+        </InputBox>
+
+        <Button isLoading={isLoading} text="adicionar" />
+      </InputsContainer>
     </GenericPopup>
   );
 };
 
-export default EditUser;
+export default AddUserForm;
