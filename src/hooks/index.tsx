@@ -2,6 +2,7 @@ import React from 'react';
 
 import { AuthProvider } from './auth';
 import { PopupProvider } from './popup';
+import { ApiProvider } from './api';
 
 interface Props {
   children: React.ReactNode;
@@ -9,7 +10,9 @@ interface Props {
 
 const AppProvider: React.FC<Props> = ({ children }: Props) => (
   <PopupProvider>
-    <AuthProvider>{children}</AuthProvider>
+    <AuthProvider>
+      <ApiProvider>{children}</ApiProvider>
+    </AuthProvider>
   </PopupProvider>
 );
 
