@@ -1,21 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { PulseLoader } from 'react-spinners';
 
-import {
-  Container,
-  Content,
-  Header,
-  ListContainer,
-  LoadingContainer,
-} from './styles';
+import { ListContainer, LoadingContainer } from './styles';
 
 import { useApi } from '../../hooks/api';
 import { useAuth } from '../../hooks/auth';
 
-import Footer from '../../components/Footer';
-
 import AddItem from './AddItem';
 import ListItem from './ListItem';
+
+import GenericPage from '../../components/GenericPage';
 
 interface Item {
   id: string;
@@ -25,7 +19,7 @@ interface Item {
   total_value: number;
 }
 
-const List: React.FC = () => {
+const PartiesList: React.FC = () => {
   const { getRequestConfig } = useAuth();
   const { api } = useApi();
 
@@ -53,32 +47,28 @@ const List: React.FC = () => {
   }, [api, getRequestConfig]);
 
   return (
-    <Container>
-      <Header>Agenda de Churras</Header>
-      <Content>
-        <ListContainer>
-          {items.map(item => (
-            <ListItem
-              key={item.id}
-              date={item.date_timestamp}
-              title={item.title}
-              countUsers={item.count_users}
-              totalValue={item.total_value}
-            />
-          ))}
+    <GenericPage title="Agenda de Churras">
+      <ListContainer>
+        {items.map(item => (
+          <ListItem
+            key={item.id}
+            date={item.date_timestamp}
+            title={item.title}
+            countUsers={item.count_users}
+            totalValue={item.total_value}
+          />
+        ))}
 
-          <AddItem />
-        </ListContainer>
+        <AddItem />
+      </ListContainer>
 
-        {isLoading && (
-          <LoadingContainer>
-            <PulseLoader color="#ffd836" />
-          </LoadingContainer>
-        )}
-      </Content>
-      <Footer />
-    </Container>
+      {isLoading && (
+        <LoadingContainer>
+          <PulseLoader color="#ffd836" />
+        </LoadingContainer>
+      )}
+    </GenericPage>
   );
 };
 
-export default List;
+export default PartiesList;
