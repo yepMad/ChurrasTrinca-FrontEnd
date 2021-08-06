@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
+import { PulseLoader } from 'react-spinners';
 import { format } from 'date-fns';
 
 import { useApi } from '../../hooks/api';
@@ -18,6 +19,7 @@ import {
   InfoContainer,
   InfoText,
   UsersContainer,
+  LoadingContainer,
 } from './styles';
 
 import { ReactComponent as IconPeople } from '../../assets/icon_people.svg';
@@ -59,6 +61,8 @@ const Party: React.FC = () => {
   const { api } = useApi();
   const { getRequestConfig } = useAuth();
 
+  const [loading, setLoading] = useState(false);
+
   const [title, setTitle] = useState('');
   const [date, setDate] = useState(Date.now());
   const [countUsers, setCountUsers] = useState(0);
@@ -69,6 +73,8 @@ const Party: React.FC = () => {
   useEffect(() => {
     const fetch = async () => {
       try {
+        setLoading(true);
+
         const { data } = await api().get<Response>(
           `/parties/${partyId}`,
           getRequestConfig(),
@@ -80,6 +86,8 @@ const Party: React.FC = () => {
         setTotalValue(data.party_infos.total_value);
         setPartyUsers(data.party_users);
         setIsOwner(data.is_owner);
+
+        setLoading(false);
       } catch {
         history.push('/');
       }
@@ -96,9 +104,17 @@ const Party: React.FC = () => {
     return getCurrencyFormatted(totalValue);
   }, [totalValue]);
 
-  return (
-    <GenericPage title="Agenda de Churras">
-      <Content>
+  const getContent = () => {
+    if (loading) {
+      return (
+        <LoadingContainer>
+          <PulseLoader color="#FFD836" />
+        </LoadingContainer>
+      );
+    }
+
+    return (
+      <>
         <HeaderContainer>
           <InfosContainer>
             <DateTitle>{format(date, 'dd/MM')}</DateTitle>
@@ -128,7 +144,13 @@ const Party: React.FC = () => {
             />
           ))}
         </UsersContainer>
-      </Content>
+      </>
+    );
+  };
+
+  return (
+    <GenericPage title="Agenda de Churras">
+      <Content>{getContent()}</Content>
     </GenericPage>
   );
 };

@@ -59,3 +59,8 @@ export const InfoText = styled.p`
 export const UsersContainer = styled.div`
   margin-top: 50px;
 `;
+
+export const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+`;
