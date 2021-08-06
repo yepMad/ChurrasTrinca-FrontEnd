@@ -12,11 +12,21 @@ interface PriceProps {
 export const Container = styled.div`
   display: flex;
   justify-content: space-between;
+
+  @media only screen and (max-width: 460px) {
+    justify-content: center;
+
+    flex-direction: column;
+  }
 `;
 
 export const RightContent = styled.div`
   display: flex;
   align-items: center;
+
+  @media only screen and (max-width: 460px) {
+    margin-bottom: 10px;
+  }
 `;
 
 export const EditButton = styled.button`
@@ -87,11 +97,25 @@ export const UserNameText = styled.p`
   font-weight: bold;
   font-size: 21px;
 
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
   color: rgba(0, 0, 0, 0.8);
 `;
 
 export const LeftContent = styled.div`
   display: flex;
+
+  @media only screen and (max-width: 635px) {
+    align-items: flex-end;
+    flex-direction: column;
+  }
+
+  @media only screen and (max-width: 460px) {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 `;
 
 export const PriceContent = styled.div<PriceProps>`
@@ -109,7 +133,13 @@ export const PriceContent = styled.div<PriceProps>`
   }
 
   & + & {
-    margin-left: 20px;
+    @media only screen and (min-width: 460px) {
+      margin-left: 20px;
+    }
+  }
+
+  @media only screen and (max-width: 460px) {
+    max-width: 100%;
   }
 `;
 
@@ -118,10 +148,9 @@ export const Price = styled.p`
   font-size: 21px;
 
   color: rgba(0, 0, 0, 0.8);
-
-  :hover {
-    cursor: pointer;
-  }
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const Line = styled.hr`

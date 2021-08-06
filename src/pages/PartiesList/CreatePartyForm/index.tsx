@@ -99,7 +99,7 @@ const CreatePartyForm: React.FC<Props> = ({ close }: Props) => {
         <InputBox>
           <Input
             name="name"
-            placeholder="Nome do Churras"
+            placeholder="nome do churras"
             disabled={isLoading}
           />
         </InputBox>
@@ -107,7 +107,7 @@ const CreatePartyForm: React.FC<Props> = ({ close }: Props) => {
           <Input
             name="date"
             type="date"
-            placeholder="Data"
+            placeholder="data"
             defaultValue={initialDate}
             disabled={isLoading}
           />
@@ -115,14 +115,14 @@ const CreatePartyForm: React.FC<Props> = ({ close }: Props) => {
         <InputBox>
           <Input
             name="description"
-            placeholder="Descrição"
+            placeholder="descrição"
             disabled={isLoading}
           />
         </InputBox>
         <InputBox>
           <Input
             name="observation"
-            placeholder="Observações adicionais"
+            placeholder="observações adicionais"
             disabled={isLoading}
           />
         </InputBox>
