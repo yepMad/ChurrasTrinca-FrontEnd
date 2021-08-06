@@ -3,9 +3,13 @@ import React from 'react';
 import { Container, Content, Circle, Text } from './styles';
 import { ReactComponent as IconGrill } from '../../../assets/icon_grill.svg';
 
-function AddItem() {
+interface Props {
+  onClick: () => void;
+}
+
+function AddItem({ onClick }: Props) {
   return (
-    <Container>
+    <Container onClick={onClick}>
       <Content>
         <Circle>
           <IconGrill />

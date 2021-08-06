@@ -6,6 +6,7 @@ import { ListContainer, LoadingContainer } from './styles';
 import { useApi } from '../../hooks/api';
 import { useAuth } from '../../hooks/auth';
 
+import CreatePartyForm from './CreatePartyForm';
 import AddItem from './AddItem';
 import ListItem from './ListItem';
 
@@ -25,6 +26,7 @@ const PartiesList: React.FC = () => {
 
   const [items, setItems] = useState<Item[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isShowingAddForm, setIsShowingAddForm] = useState(false);
 
   useEffect(() => {
     const fetch = async () => {
@@ -47,28 +49,34 @@ const PartiesList: React.FC = () => {
   }, [api, getRequestConfig]);
 
   return (
-    <GenericPage title="Agenda de Churras">
-      <ListContainer>
-        {items.map(item => (
-          <ListItem
-            key={item.id}
-            partyId={item.id}
-            date={item.date_timestamp}
-            title={item.title}
-            countUsers={item.count_users}
-            totalValue={item.total_value}
-          />
-        ))}
+    <>
+      <GenericPage title="Agenda de Churras">
+        <ListContainer>
+          {items.map(item => (
+            <ListItem
+              key={item.id}
+              partyId={item.id}
+              date={item.date_timestamp}
+              title={item.title}
+              countUsers={item.count_users}
+              totalValue={item.total_value}
+            />
+          ))}
 
-        <AddItem />
-      </ListContainer>
+          <AddItem onClick={() => setIsShowingAddForm(true)} />
+        </ListContainer>
 
-      {isLoading && (
-        <LoadingContainer>
-          <PulseLoader color="#ffd836" />
-        </LoadingContainer>
+        {isLoading && (
+          <LoadingContainer>
+            <PulseLoader color="#ccc9bd" />
+          </LoadingContainer>
+        )}
+      </GenericPage>
+
+      {isShowingAddForm && (
+        <CreatePartyForm close={() => setIsShowingAddForm(false)} />
       )}
-    </GenericPage>
+    </>
   );
 };
 
