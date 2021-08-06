@@ -91,7 +91,11 @@ const EditUser: React.FC<Props> = (props: Props) => {
 
         const res = await api().put<PartyUser>(
           `/parties/users/${partyUserId}`,
-          { general_value: generalValue, drinks_value: drinksValue },
+          {
+            general_value: generalValue,
+            drinks_value: drinksValue,
+            itsPaid: false,
+          },
           getRequestConfig(),
         );
 
