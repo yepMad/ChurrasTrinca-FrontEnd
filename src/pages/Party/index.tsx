@@ -117,6 +117,16 @@ const Party: React.FC = () => {
     });
   }, []);
 
+  const onDelete = useCallback((id: string) => {
+    setPartyUsers(oldState => {
+      const index = oldState.findIndex(i => i.id === id);
+      const newData = [...oldState];
+      newData.splice(index, 1);
+
+      return newData;
+    });
+  }, []);
+
   if (loading) {
     return (
       <LoadingContainer>
@@ -158,6 +168,7 @@ const Party: React.FC = () => {
               drinks_value={i.drinks_value}
               name={i.name}
               onStateUpdate={onUserStateUpdate}
+              onDelete={onDelete}
             />
           ))}
         </UsersContainer>

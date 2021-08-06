@@ -28,6 +28,7 @@ interface Props extends PartyUser {
   isUserPartyOwner: boolean;
 
   onStateUpdate: (data: PartyUser) => void;
+  onDelete: (id: string) => void;
 }
 
 function UserItem(props: Props) {
@@ -41,6 +42,7 @@ function UserItem(props: Props) {
     general_value,
     drinks_value,
     onStateUpdate,
+    onDelete,
   } = props;
 
   const { api } = useApi();
@@ -72,14 +74,13 @@ function UserItem(props: Props) {
   const deleteUserParty = useCallback(async () => {
     try {
       setIsLoadingDelete(true);
-      console.log(id);
-      await api().delete(`/parties/users/${id}`, getRequestConfig());
 
-      setIsLoadingDelete(false);
+      await api().delete(`/parties/users/${id}`, getRequestConfig());
+      onDelete(id);
     } catch (error) {
       setIsLoadingDelete(false);
     }
-  }, [api, id, getRequestConfig]);
+  }, [api, id, getRequestConfig, onDelete]);
 
   const getGeneralValue = useMemo((): string => {
     return getCurrencyFormatted(general_value);
