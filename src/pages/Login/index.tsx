@@ -1,6 +1,7 @@
 import React, { useRef, useCallback, useState } from 'react';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
+import axios, { AxiosError } from 'axios';
 
 import {
   Container,
@@ -19,6 +20,7 @@ import Footer from '../../components/Footer';
 import getValidationErrors from '../../utils/getValidationErrors';
 
 import { useAuth } from '../../hooks/auth';
+import { usePopup } from '../../hooks/popup';
 
 interface SignInFormData {
   email: string;
@@ -28,6 +30,7 @@ interface SignInFormData {
 const Login: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const { signIn } = useAuth();
+  const { addPopup } = usePopup();
 
   const [loading, setLoading] = useState(false);
 
@@ -57,12 +60,25 @@ const Login: React.FC = () => {
           const errors = getValidationErrors(error);
 
           formRef.current?.setErrors(errors);
+          return;
         }
 
-        console.log(error);
+        if (axios.isAxiosError(error)) {
+          const { response } = error as AxiosError<ChurrasTrinca.ApiError>;
+
+          if (response) {
+            addPopup({ description: response.data.message, type: 'error' });
+            return;
+          }
+        }
+
+        addPopup({
+          description: 'Desculpe! Algo inesperado aconteceu.',
+          type: 'error',
+        });
       }
     },
-    [signIn],
+    [signIn, addPopup],
   );
 
   return (
