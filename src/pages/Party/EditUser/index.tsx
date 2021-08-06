@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useState } from 'react';
 import { BiDrink } from 'react-icons/bi';
 import { FormHandles } from '@unform/core';
 import { IoFastFoodOutline } from 'react-icons/io5';
@@ -47,10 +47,13 @@ const EditUser: React.FC<Props> = (props: Props) => {
   const { getRequestConfig } = useAuth();
   const { addPopup } = usePopup();
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const formRef = useRef<FormHandles>(null);
   const handleSubmit = useCallback(
     async (data: FormData) => {
       try {
+        setIsLoading(true);
         formRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
@@ -108,13 +111,15 @@ const EditUser: React.FC<Props> = (props: Props) => {
             type: 'error',
           });
         }
+
+        setIsLoading(false);
       }
     },
     [addPopup, api, getRequestConfig, onStateUpdate, partyUserId, close],
   );
 
   return (
-    <GenericPopup onClickOutside={() => close()}>
+    <GenericPopup isLoading={isLoading} onClickOutside={() => close()}>
       <EditTitle>{userName}</EditTitle>
 
       <EditFormContent ref={formRef} onSubmit={handleSubmit}>
@@ -124,6 +129,7 @@ const EditUser: React.FC<Props> = (props: Props) => {
             name="generalValue"
             Icon={IoFastFoodOutline}
             defaultValue={initialGeneralValue}
+            disabled={isLoading}
             decimalScale={2}
           />
         </EditInputBox>
@@ -133,10 +139,11 @@ const EditUser: React.FC<Props> = (props: Props) => {
             name="drinksValue"
             Icon={BiDrink}
             defaultValue={initialDrinksValue}
+            disabled={isLoading}
             decimalScale={2}
           />
         </EditInputBox>
-        <Button isLoading={false} text="salvar" />
+        <Button isLoading={isLoading} text="salvar" />
       </EditFormContent>
     </GenericPopup>
   );
