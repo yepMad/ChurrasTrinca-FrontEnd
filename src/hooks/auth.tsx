@@ -34,8 +34,8 @@ interface Props {
 
 export const AuthProvider: React.FC<Props> = ({ children }: Props) => {
   const [data, setData] = useState<AuthState>(() => {
-    const token = localStorage.getItem(LOCAL_STORAGE_USER);
-    const user = localStorage.getItem(LOCAL_STORAGE_TOKEN);
+    const token = localStorage.getItem(LOCAL_STORAGE_TOKEN);
+    const user = localStorage.getItem(LOCAL_STORAGE_USER);
 
     if (token && user) {
       return { token, user: JSON.parse(user) };
