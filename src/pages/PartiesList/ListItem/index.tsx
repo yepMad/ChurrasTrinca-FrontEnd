@@ -12,6 +12,8 @@ import {
   InfoText,
 } from './styles';
 
+import getCurrencyFormatted from '../../../utils/getCurrencyFormatted';
+
 import { ReactComponent as IconPeople } from '../../../assets/icon_people.svg';
 import { ReactComponent as IconMoney } from '../../../assets/icon_money.svg';
 
@@ -23,11 +25,8 @@ interface Props {
 }
 
 function ListItem({ date, title, countUsers, totalValue }: Props) {
-  const getCurrency = useMemo(() => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(totalValue);
+  const getCurrency = useMemo((): string => {
+    return getCurrencyFormatted(totalValue);
   }, [totalValue]);
 
   return (
