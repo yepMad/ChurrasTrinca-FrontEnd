@@ -92,7 +92,8 @@ export const ApiProvider: React.FC<Props> = ({ children }: Props) => {
 
       axiosApi.interceptors.response.use(
         response => response,
-        error => errorHandler({ error, showErrorPopup: data?.showErrorPopup }),
+        error =>
+          errorHandler({ error, showErrorPopup: data?.showErrorPopup || true }),
       );
 
       return axiosApi;
