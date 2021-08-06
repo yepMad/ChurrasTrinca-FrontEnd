@@ -5,24 +5,17 @@ import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 
 import { format, addDays } from 'date-fns';
-import { PulseLoader } from 'react-spinners';
 
 import { useApi } from '../../../hooks/api';
 import { useAuth } from '../../../hooks/auth';
 
 import getValidationErrors from '../../../utils/getValidationErrors';
 
-import {
-  Container,
-  Panel,
-  Text,
-  InputsContainer,
-  InputBox,
-  ButtonContainer,
-  Button,
-} from './styles';
-
 import Input from '../../../components/Input';
+import GenericPopup from '../../../components/GenericPopup';
+import Button from '../../../components/GenericPopup/addons/Button';
+
+import { Text, InputBox, InputsContainer } from './styles';
 
 interface Props {
   close: () => void;
@@ -99,60 +92,44 @@ const CreatePartyForm: React.FC<Props> = ({ close }: Props) => {
     [api, getRequestConfig, history],
   );
 
-  const onClickOutside = useCallback(() => {
-    if (!isLoading) {
-      close();
-    }
-  }, [close, isLoading]);
-
   return (
-    <Container onClick={onClickOutside}>
-      <Panel onClick={e => e.stopPropagation()}>
-        <Text>Como vai ser?!</Text>
-        <InputsContainer ref={formRef} onSubmit={handleSubmit}>
-          <InputBox>
-            <Input
-              name="name"
-              placeholder="Nome do Churras"
-              disabled={isLoading}
-            />
-          </InputBox>
-          <InputBox>
-            <Input
-              name="date"
-              type="date"
-              placeholder="Data"
-              defaultValue={initialDate}
-              disabled={isLoading}
-            />
-          </InputBox>
-          <InputBox>
-            <Input
-              name="description"
-              placeholder="Descrição"
-              disabled={isLoading}
-            />
-          </InputBox>
-          <InputBox>
-            <Input
-              name="observation"
-              placeholder="Observações adicionais"
-              disabled={isLoading}
-            />
-          </InputBox>
+    <GenericPopup isLoading={isLoading} onClickOutside={close}>
+      <Text>Como vai ser?!</Text>
+      <InputsContainer ref={formRef} onSubmit={handleSubmit}>
+        <InputBox>
+          <Input
+            name="name"
+            placeholder="Nome do Churras"
+            disabled={isLoading}
+          />
+        </InputBox>
+        <InputBox>
+          <Input
+            name="date"
+            type="date"
+            placeholder="Data"
+            defaultValue={initialDate}
+            disabled={isLoading}
+          />
+        </InputBox>
+        <InputBox>
+          <Input
+            name="description"
+            placeholder="Descrição"
+            disabled={isLoading}
+          />
+        </InputBox>
+        <InputBox>
+          <Input
+            name="observation"
+            placeholder="Observações adicionais"
+            disabled={isLoading}
+          />
+        </InputBox>
 
-          <ButtonContainer>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? (
-                <PulseLoader color="#FFD836" size={10} />
-              ) : (
-                'agendar'
-              )}
-            </Button>
-          </ButtonContainer>
-        </InputsContainer>
-      </Panel>
-    </Container>
+        <Button isLoading={isLoading} text="agendar" />
+      </InputsContainer>
+    </GenericPopup>
   );
 };
 

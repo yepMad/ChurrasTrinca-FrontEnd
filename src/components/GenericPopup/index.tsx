@@ -4,13 +4,18 @@ import { Container, Panel } from './styles';
 
 interface Props {
   children: React.ReactNode;
+  isLoading: boolean;
 
   onClickOutside: () => void;
 }
 
-const GenericPopup: React.FC<Props> = ({ onClickOutside, children }: Props) => {
+const GenericPopup: React.FC<Props> = ({
+  onClickOutside,
+  isLoading,
+  children,
+}: Props) => {
   return (
-    <Container onClick={onClickOutside}>
+    <Container onClick={isLoading ? () => null : () => onClickOutside()}>
       <Panel onClick={e => e.stopPropagation()}>{children}</Panel>
     </Container>
   );
