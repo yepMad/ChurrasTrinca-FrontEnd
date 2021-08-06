@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useHistory, Link } from 'react-router-dom';
 import { PulseLoader } from 'react-spinners';
+import { FiArrowLeft } from 'react-icons/fi';
 import { format } from 'date-fns';
 
 import { useApi } from '../../hooks/api';
 import { useAuth } from '../../hooks/auth';
 
 import getCurrencyFormatted from '../../utils/getCurrencyFormatted';
-
 import GenericPage from '../../components/GenericPage';
 
 import EditUser from './EditUser';
@@ -26,6 +26,7 @@ import {
   InfoText,
   UsersContainer,
   LoadingContainer,
+  BackButtonContainer,
 } from './styles';
 
 import { ReactComponent as IconPeople } from '../../assets/icon_people.svg';
@@ -202,6 +203,13 @@ const Party: React.FC = () => {
             ))}
           </UsersContainer>
         </Content>
+
+        <BackButtonContainer>
+          <Link to="/churrascos">
+            <FiArrowLeft />
+            Voltar
+          </Link>
+        </BackButtonContainer>
       </GenericPage>
 
       {editingUser && (

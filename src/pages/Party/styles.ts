@@ -131,3 +131,18 @@ export const LoadingContainer = styled.div`
   display: flex;
   justify-content: center;
 `;
+
+export const BackButtonContainer = styled.div`
+  margin-top: 20px;
+
+  a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #000;
+
+    svg {
+      margin-right: 10px;
+    }
+  }
+`;
