@@ -19,6 +19,9 @@ import {
   ResumeContainer,
   DateTitle,
   Title,
+  HeaderDetails,
+  DescriptionText,
+  ObservationText,
   InfoContainer,
   InfoText,
   UsersContainer,
@@ -38,6 +41,8 @@ interface PartyInfos {
   id: string;
   title: string;
   date_timestamp: number;
+  description: string;
+  observation?: string;
   count_users: number;
   total_value: number;
   owner_id: string;
@@ -76,6 +81,8 @@ const Party: React.FC = () => {
   const [editingUser, setEditingUser] = useState<EditingUser | null>(null);
 
   const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [observation, setObservation] = useState('');
   const [date, setDate] = useState(Date.now());
   const [partyUsers, setPartyUsers] = useState<PartyUser[]>([]);
   const [ownerId, setOwnerId] = useState('');
@@ -92,6 +99,8 @@ const Party: React.FC = () => {
         );
 
         setTitle(data.party_infos.title);
+        setDescription(data.party_infos.description);
+        setObservation(data.party_infos.observation || '');
         setOwnerId(data.party_infos.owner_id);
         setDate(data.party_infos.date_timestamp);
         setPartyUsers(data.party_users);
@@ -156,6 +165,11 @@ const Party: React.FC = () => {
             <InfosContainer>
               <DateTitle>{format(date, 'dd/MM')}</DateTitle>
               <Title>{title}</Title>
+
+              <HeaderDetails>
+                <DescriptionText>{description}</DescriptionText>
+                <ObservationText>{observation}</ObservationText>
+              </HeaderDetails>
             </InfosContainer>
             <ResumeContainer>
               <InfoContainer>
