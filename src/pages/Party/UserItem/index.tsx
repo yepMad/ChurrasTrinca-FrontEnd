@@ -34,12 +34,19 @@ function UserItem(data: Props) {
     return getCurrencyFormatted(drinks_value);
   }, [drinks_value]);
 
+  const getUserName = useMemo((): string => {
+    const userNames = user_name.split(' ');
+
+    const suffix = userNames.length >= 2 ? ` ${userNames[1][0]}.` : '';
+    return `${userNames[0]}${suffix}`;
+  }, [user_name]);
+
   return (
     <>
       <Container>
         <RightContent>
           <Circle itsChecked={its_paid} />
-          <UserNameText>{user_name}</UserNameText>
+          <UserNameText>{getUserName}</UserNameText>
         </RightContent>
         <LeftContent>
           <PriceContent>
