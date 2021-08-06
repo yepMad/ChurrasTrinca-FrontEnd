@@ -1,6 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { PulseLoader } from 'react-spinners';
 
-import { Container, Content, Header, ListContainer } from './styles';
+import {
+  Container,
+  Content,
+  Header,
+  ListContainer,
+  LoadingContainer,
+} from './styles';
+
+import { useApi } from '../../hooks/api';
+import { useAuth } from '../../hooks/auth';
 
 import Footer from '../../components/Footer';
 
@@ -16,7 +26,31 @@ interface Item {
 }
 
 const List: React.FC = () => {
+  const { getRequestConfig } = useAuth();
+  const { api } = useApi();
+
   const [items, setItems] = useState<Item[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        setIsLoading(true);
+
+        const response = await api().get<Item[]>(
+          '/parties',
+          getRequestConfig(),
+        );
+
+        setItems(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        setIsLoading(false);
+      }
+    };
+
+    fetch();
+  }, [api, getRequestConfig]);
 
   return (
     <Container>
@@ -35,6 +69,12 @@ const List: React.FC = () => {
 
           <AddItem />
         </ListContainer>
+
+        {isLoading && (
+          <LoadingContainer>
+            <PulseLoader color="#ffd836" />
+          </LoadingContainer>
+        )}
       </Content>
       <Footer />
     </Container>

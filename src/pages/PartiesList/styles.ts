@@ -35,6 +35,13 @@ export const ListContainer = styled.div`
   }
 `;
 
+export const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+
+  margin-top: 50px;
+`;
+
 export const Header = styled.div`
   color: #000;
 
