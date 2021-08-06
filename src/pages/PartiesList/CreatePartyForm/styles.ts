@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Form } from '@unform/web';
 import { tint } from 'polished';
 
@@ -75,6 +75,12 @@ export const Button = styled.button`
   transition: 0.2s;
 
   :hover {
-    background-color: ${tint(0.2, '#000')};
+    cursor: auto;
+    ${({ disabled }) =>
+      !disabled &&
+      css`
+        cursor: pointer;
+        background-color: ${tint(0.2, '#000')};
+      `};
   }
 `;

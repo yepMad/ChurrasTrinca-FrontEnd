@@ -1,8 +1,11 @@
-import React, { useRef, useMemo, useCallback } from 'react';
+import React, { useRef, useMemo, useCallback, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+
 import { FormHandles } from '@unform/core';
-import { format, addDays } from 'date-fns';
 import * as Yup from 'yup';
+
+import { format, addDays } from 'date-fns';
+import { PulseLoader } from 'react-spinners';
 
 import { useApi } from '../../../hooks/api';
 import { useAuth } from '../../../hooks/auth';
@@ -43,6 +46,8 @@ const CreatePartyForm: React.FC<Props> = ({ close }: Props) => {
   const formRef = useRef<FormHandles>(null);
   const history = useHistory();
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const { api } = useApi();
   const { getRequestConfig } = useAuth();
 
@@ -54,6 +59,7 @@ const CreatePartyForm: React.FC<Props> = ({ close }: Props) => {
   const handleSubmit = useCallback(
     async (data: FormData) => {
       try {
+        setIsLoading(true);
         formRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
@@ -86,18 +92,30 @@ const CreatePartyForm: React.FC<Props> = ({ close }: Props) => {
 
           formRef.current?.setErrors(errors);
         }
+
+        setIsLoading(false);
       }
     },
     [api, getRequestConfig, history],
   );
 
+  const onClickOutside = useCallback(() => {
+    if (!isLoading) {
+      close();
+    }
+  }, [close, isLoading]);
+
   return (
-    <Container onClick={() => close()}>
+    <Container onClick={onClickOutside}>
       <Panel onClick={e => e.stopPropagation()}>
         <Text>Como vai ser?!</Text>
         <InputsContainer ref={formRef} onSubmit={handleSubmit}>
           <InputBox>
-            <Input name="name" placeholder="Nome do Churras" />
+            <Input
+              name="name"
+              placeholder="Nome do Churras"
+              disabled={isLoading}
+            />
           </InputBox>
           <InputBox>
             <Input
@@ -105,17 +123,32 @@ const CreatePartyForm: React.FC<Props> = ({ close }: Props) => {
               type="date"
               placeholder="Data"
               defaultValue={initialDate}
+              disabled={isLoading}
             />
           </InputBox>
           <InputBox>
-            <Input name="description" placeholder="Descrição" />
+            <Input
+              name="description"
+              placeholder="Descrição"
+              disabled={isLoading}
+            />
           </InputBox>
           <InputBox>
-            <Input name="observation" placeholder="Observações adicionais" />
+            <Input
+              name="observation"
+              placeholder="Observações adicionais"
+              disabled={isLoading}
+            />
           </InputBox>
 
           <ButtonContainer>
-            <Button type="submit">agendar</Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? (
+                <PulseLoader color="#FFD836" size={10} />
+              ) : (
+                'agendar'
+              )}
+            </Button>
           </ButtonContainer>
         </InputsContainer>
       </Panel>
