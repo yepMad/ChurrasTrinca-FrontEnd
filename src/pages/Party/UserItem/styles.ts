@@ -1,7 +1,12 @@
 import styled, { css } from 'styled-components';
+import { shade } from 'polished';
 
 interface CircleProps {
   itsChecked: boolean;
+}
+
+interface PriceProps {
+  itsPaid: boolean;
 }
 
 export const Container = styled.div`
@@ -11,6 +16,35 @@ export const Container = styled.div`
 
 export const RightContent = styled.div`
   display: flex;
+  align-items: center;
+`;
+
+export const CloseButton = styled.button`
+  display: flex;
+
+  background: none;
+  border: none;
+
+  margin-right: 10px;
+
+  svg {
+    transition: color 0.2s;
+    color: #ff3636;
+  }
+
+  :hover {
+    svg {
+      color: ${shade(0.5, '#ff3636')};
+    }
+  }
+`;
+
+export const OptionsContainer = styled.div`
+  display: flex;
+  align-items: center;
+
+  margin-right: 18px;
+  margin-left: 5px;
 `;
 
 export const Circle = styled.button<CircleProps>`
@@ -20,8 +54,6 @@ export const Circle = styled.button<CircleProps>`
   border-radius: 50px;
   background-color: #ffd836;
   border: 3px solid #ffd836;
-
-  margin-right: 18px;
 
   ${({ itsChecked }) =>
     !itsChecked &&
@@ -42,9 +74,15 @@ export const LeftContent = styled.div`
   display: flex;
 `;
 
-export const PriceContent = styled.div`
+export const PriceContent = styled.div<PriceProps>`
   display: flex;
   align-items: center;
+
+  ${({ itsPaid }) =>
+    itsPaid &&
+    css`
+      text-decoration-line: line-through;
+    `}
 
   svg {
     margin-right: 10px;

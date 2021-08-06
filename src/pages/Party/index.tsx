@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { PulseLoader } from 'react-spinners';
 import { format } from 'date-fns';
@@ -37,9 +37,10 @@ interface PartyInfos {
   date_timestamp: number;
   count_users: number;
   total_value: number;
+  owner_id: string;
 }
 
-interface PartyUser {
+export interface PartyUser {
   id: string;
   user_id: string;
   name: string;
@@ -68,7 +69,8 @@ const Party: React.FC = () => {
   const [countUsers, setCountUsers] = useState(0);
   const [totalValue, setTotalValue] = useState(0);
   const [partyUsers, setPartyUsers] = useState<PartyUser[]>([]);
-  const [isOwner, setIsOwner] = useState<boolean>(false);
+  const [ownerId, setOwnerId] = useState('');
+  const [isOwner, setIsOwner] = useState(false);
 
   useEffect(() => {
     const fetch = async () => {
@@ -81,6 +83,7 @@ const Party: React.FC = () => {
         );
 
         setTitle(data.party_infos.title);
+        setOwnerId(data.party_infos.owner_id);
         setDate(data.party_infos.date_timestamp);
         setCountUsers(data.party_infos.count_users);
         setTotalValue(data.party_infos.total_value);
@@ -104,17 +107,28 @@ const Party: React.FC = () => {
     return getCurrencyFormatted(totalValue);
   }, [totalValue]);
 
-  const getContent = () => {
-    if (loading) {
-      return (
-        <LoadingContainer>
-          <PulseLoader color="#FFD836" />
-        </LoadingContainer>
-      );
-    }
+  const onUserStateUpdate = useCallback(
+    (data: PartyUser) => {
+      const index = partyUsers.findIndex(i => i.id === data.id);
+      const newData = [...partyUsers];
+      newData[index] = data;
 
+      setPartyUsers(newData);
+    },
+    [partyUsers],
+  );
+
+  if (loading) {
     return (
-      <>
+      <LoadingContainer>
+        <PulseLoader color="#FFD836" />
+      </LoadingContainer>
+    );
+  }
+
+  return (
+    <GenericPage title="Agenda de Churras">
+      <Content>
         <HeaderContainer>
           <InfosContainer>
             <DateTitle>{format(date, 'dd/MM')}</DateTitle>
@@ -136,21 +150,19 @@ const Party: React.FC = () => {
           {partyUsers.map(i => (
             <UserItem
               key={i.id}
+              id={i.id}
+              owner_id={ownerId}
+              itsPaid={i.itsPaid}
+              isUserPartyOwner={isOwner}
               user_id={i.user_id}
-              its_paid={i.itsPaid}
               general_value={i.general_value}
               drinks_value={i.drinks_value}
-              user_name={i.name}
+              name={i.name}
+              onStateUpdate={onUserStateUpdate}
             />
           ))}
         </UsersContainer>
-      </>
-    );
-  };
-
-  return (
-    <GenericPage title="Agenda de Churras">
-      <Content>{getContent()}</Content>
+      </Content>
     </GenericPage>
   );
 };
