@@ -2,6 +2,7 @@ import React, { useRef, useCallback, useState } from 'react';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 import axios, { AxiosError } from 'axios';
+import { PulseLoader } from 'react-spinners';
 
 import {
   Container,
@@ -32,7 +33,7 @@ const Login: React.FC = () => {
   const { signIn } = useAuth();
   const { addPopup } = usePopup();
 
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = useCallback(
     async (data: SignInFormData) => {
@@ -54,7 +55,7 @@ const Login: React.FC = () => {
 
         await signIn({ email: data.email, password: data.password });
       } catch (error) {
-        setLoading(false);
+        setIsLoading(false);
 
         if (error instanceof Yup.ValidationError) {
           const errors = getValidationErrors(error);
@@ -89,7 +90,12 @@ const Login: React.FC = () => {
         <InputsContainer ref={formRef} onSubmit={handleSubmit}>
           <InputBox>
             <InputLabel>Login</InputLabel>
-            <Input name="email" placeholder="e-mail" type="email" />
+            <Input
+              name="email"
+              placeholder="e-mail"
+              type="email"
+              disabled={isLoading}
+            />
           </InputBox>
           <InputBox>
             <InputLabel>Senha</InputLabel>
@@ -98,11 +104,14 @@ const Login: React.FC = () => {
               name="password"
               placeholder="senha"
               type="password"
+              disabled={isLoading}
             />
           </InputBox>
 
           <ButtonContainer>
-            <Button type="submit">Entrar</Button>
+            <Button type="submit" isActive={!isLoading}>
+              {isLoading ? <PulseLoader color="#FFD836" size={10} /> : 'Entrar'}
+            </Button>
           </ButtonContainer>
         </InputsContainer>
       </Content>

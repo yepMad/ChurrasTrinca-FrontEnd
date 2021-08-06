@@ -11,7 +11,7 @@ const Button: React.FC<Props> = ({
   children,
   ...rest
 }: Props) => (
-  <Container isActive={isActive} type="button" {...rest}>
+  <Container isActive={isActive} disabled={!isActive} type="button" {...rest}>
     {children}
   </Container>
 );
