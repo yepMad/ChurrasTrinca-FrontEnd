@@ -13,6 +13,8 @@ export const Container = styled.div<ContainerProps>`
   border-radius: 2px;
 
   width: 100%;
+  padding-left: 20px;
+  padding-right: 20px;
 
   color: #666360;
   border: 2px solid #ffffff;
@@ -34,9 +36,6 @@ export const Container = styled.div<ContainerProps>`
     height: 50px;
 
     font-size: 18px;
-
-    padding-left: 20px;
-    padding-right: 20px;
 
     background: transparent;
     border: 0;
