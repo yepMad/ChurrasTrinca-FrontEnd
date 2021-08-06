@@ -107,16 +107,15 @@ const Party: React.FC = () => {
     return getCurrencyFormatted(totalValue);
   }, [totalValue]);
 
-  const onUserStateUpdate = useCallback(
-    (data: PartyUser) => {
-      const index = partyUsers.findIndex(i => i.id === data.id);
-      const newData = [...partyUsers];
+  const onUserStateUpdate = useCallback((data: PartyUser) => {
+    setPartyUsers(oldState => {
+      const index = oldState.findIndex(i => i.id === data.id);
+      const newData = [...oldState];
       newData[index] = data;
 
-      setPartyUsers(newData);
-    },
-    [partyUsers],
-  );
+      return newData;
+    });
+  }, []);
 
   if (loading) {
     return (
