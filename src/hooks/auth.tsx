@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useState, useContext } from 'react';
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 
 interface SignInCredentials {
   email: string;
@@ -19,8 +19,11 @@ interface AuthState {
 interface AuthContextData {
   user: ChurrasTrinca.User;
   token: string;
+
   signIn(credentials: SignInCredentials): Promise<void>;
   signOut(): void;
+
+  getRequestConfig(): AxiosRequestConfig;
 }
 
 const LOCAL_STORAGE_USER = '@ChurrasTrinca:user';
@@ -69,6 +72,14 @@ export const AuthProvider: React.FC<Props> = ({ children }: Props) => {
     setData({} as AuthState);
   }, []);
 
+  const getRequestConfig = useCallback((): AxiosRequestConfig => {
+    return {
+      headers: {
+        Authorization: `Bearer ${data.token}`,
+      },
+    };
+  }, [data]);
+
   return (
     <AuthContext.Provider
       value={{
@@ -76,6 +87,7 @@ export const AuthProvider: React.FC<Props> = ({ children }: Props) => {
         token: data.token,
         signIn,
         signOut,
+        getRequestConfig,
       }}
     >
       {children}
