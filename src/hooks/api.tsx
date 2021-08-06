@@ -14,7 +14,7 @@ interface ApiProps {
 }
 
 interface ApiContextData {
-  api: (props: ApiProps) => AxiosInstance;
+  api: (props?: ApiProps) => AxiosInstance;
 }
 
 interface Props {
@@ -83,7 +83,7 @@ export const ApiProvider: React.FC<Props> = ({ children }: Props) => {
   );
 
   const api = useCallback(
-    ({ showErrorPopup = true }: ApiProps): AxiosInstance => {
+    (data?: ApiProps): AxiosInstance => {
       const axiosApi = axios.create({
         baseURL: `${process.env.REACT_APP_API_URL}`,
         timeoutErrorMessage:
@@ -92,7 +92,7 @@ export const ApiProvider: React.FC<Props> = ({ children }: Props) => {
 
       axiosApi.interceptors.response.use(
         response => response,
-        error => errorHandler({ error, showErrorPopup }),
+        error => errorHandler({ error, showErrorPopup: data?.showErrorPopup }),
       );
 
       return axiosApi;
