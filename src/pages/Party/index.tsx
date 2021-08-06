@@ -152,9 +152,13 @@ const Party: React.FC = () => {
 
   if (loading) {
     return (
-      <LoadingContainer>
-        <PulseLoader color="#FFD836" />
-      </LoadingContainer>
+      <GenericPage title="Agenda de Churras">
+        <Content>
+          <div style={{ margin: '0 auto' }}>
+            <PulseLoader color="#FFD836" />
+          </div>
+        </Content>
+      </GenericPage>
     );
   }
 
