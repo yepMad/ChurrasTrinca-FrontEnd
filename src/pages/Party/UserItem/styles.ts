@@ -19,6 +19,26 @@ export const RightContent = styled.div`
   align-items: center;
 `;
 
+export const EditButton = styled.button`
+  display: flex;
+
+  background: none;
+  border: none;
+
+  margin-right: 10px;
+
+  svg {
+    transition: color 0.2s;
+    color: #969675;
+  }
+
+  :hover {
+    svg {
+      color: ${shade(0.5, '#969675')};
+    }
+  }
+`;
+
 export const DeleteButton = styled.button`
   display: flex;
 
@@ -98,6 +118,10 @@ export const Price = styled.p`
   font-size: 21px;
 
   color: rgba(0, 0, 0, 0.8);
+
+  :hover {
+    cursor: pointer;
+  }
 `;
 
 export const Line = styled.hr`

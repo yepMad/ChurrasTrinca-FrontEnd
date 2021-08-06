@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback, useState } from 'react';
 import { BiDrink } from 'react-icons/bi';
-import { IoFastFoodOutline, IoCloseCircle } from 'react-icons/io5';
+import { IoFastFoodOutline, IoCloseCircle, IoPencil } from 'react-icons/io5';
 import { PuffLoader } from 'react-spinners';
 
 import { useApi } from '../../../hooks/api';
@@ -8,11 +8,12 @@ import { useAuth } from '../../../hooks/auth';
 
 import getCurrencyFormatted from '../../../utils/getCurrencyFormatted';
 
-import { PartyUser } from '..';
+import { PartyUser, EditingUser } from '..';
 
 import {
   Container,
   RightContent,
+  EditButton,
   DeleteButton,
   OptionsContainer,
   Circle,
@@ -27,6 +28,7 @@ interface Props extends PartyUser {
   owner_id: string;
   isUserPartyOwner: boolean;
 
+  editUser: (data: EditingUser) => void;
   onStateUpdate: (data: PartyUser) => void;
   onDelete: (id: string) => void;
 }
@@ -43,6 +45,7 @@ function UserItem(props: Props) {
     drinks_value,
     onStateUpdate,
     onDelete,
+    editUser,
   } = props;
 
   const { api } = useApi();
@@ -97,6 +100,27 @@ function UserItem(props: Props) {
     return `${userNames[0]}${suffix}`;
   }, [name]);
 
+  const editIcon = useMemo(() => {
+    if (!isUserPartyOwner) {
+      return null;
+    }
+
+    return (
+      <EditButton
+        onClick={() =>
+          editUser({
+            userName: name,
+            partyUserId: id,
+            initialDrinksValue: drinks_value,
+            initialGeneralValue: general_value,
+          })
+        }
+      >
+        <IoPencil size={20} />
+      </EditButton>
+    );
+  }, [id, isUserPartyOwner, editUser, general_value, drinks_value, name]);
+
   const deleteIcon = useMemo(() => {
     if (isUserPartyOwner && user_id === owner_id) {
       return null;
@@ -131,6 +155,8 @@ function UserItem(props: Props) {
           <OptionsContainer>
             {deleteIcon}
 
+            {editIcon}
+
             {isLoadingPaidStatus ? (
               <PuffLoader size={25} />
             ) : (
@@ -160,6 +186,4 @@ function UserItem(props: Props) {
   );
 }
 
-export default React.memo(UserItem, (prevProps, nextProps) => {
-  return prevProps.itsPaid === nextProps.itsPaid;
-});
+export default React.memo(UserItem);

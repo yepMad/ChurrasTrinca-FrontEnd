@@ -7,7 +7,10 @@ import { useApi } from '../../hooks/api';
 import { useAuth } from '../../hooks/auth';
 
 import getCurrencyFormatted from '../../utils/getCurrencyFormatted';
+
 import GenericPage from '../../components/GenericPage';
+
+import EditUser from './EditUser';
 
 import {
   Content,
@@ -55,6 +58,13 @@ interface Response {
   is_owner: boolean;
 }
 
+export interface EditingUser {
+  partyUserId: string;
+  userName: string;
+  initialGeneralValue: number;
+  initialDrinksValue: number;
+}
+
 const Party: React.FC = () => {
   const history = useHistory();
   const { partyId } = useParams<Params>();
@@ -63,11 +73,11 @@ const Party: React.FC = () => {
   const { getRequestConfig } = useAuth();
 
   const [loading, setLoading] = useState(false);
+  const [editingUser, setEditingUser] = useState<EditingUser | null>(null);
 
   const [title, setTitle] = useState('');
   const [date, setDate] = useState(Date.now());
   const [countUsers, setCountUsers] = useState(0);
-  const [totalValue, setTotalValue] = useState(0);
   const [partyUsers, setPartyUsers] = useState<PartyUser[]>([]);
   const [ownerId, setOwnerId] = useState('');
   const [isOwner, setIsOwner] = useState(false);
@@ -86,7 +96,6 @@ const Party: React.FC = () => {
         setOwnerId(data.party_infos.owner_id);
         setDate(data.party_infos.date_timestamp);
         setCountUsers(data.party_infos.count_users);
-        setTotalValue(data.party_infos.total_value);
         setPartyUsers(data.party_users);
         setIsOwner(data.is_owner);
 
@@ -104,8 +113,14 @@ const Party: React.FC = () => {
   }, [api, history, partyId, getRequestConfig]);
 
   const getCurrency = useMemo((): string => {
+    const totalValue = partyUsers.reduce(
+      (sum, { general_value, drinks_value }) =>
+        sum + (general_value + drinks_value),
+      0,
+    );
+
     return getCurrencyFormatted(totalValue);
-  }, [totalValue]);
+  }, [partyUsers]);
 
   const onUserStateUpdate = useCallback((data: PartyUser) => {
     setPartyUsers(oldState => {
@@ -136,44 +151,58 @@ const Party: React.FC = () => {
   }
 
   return (
-    <GenericPage title="Agenda de Churras">
-      <Content>
-        <HeaderContainer>
-          <InfosContainer>
-            <DateTitle>{format(date, 'dd/MM')}</DateTitle>
-            <Title>{title}</Title>
-          </InfosContainer>
-          <ResumeContainer>
-            <InfoContainer>
-              <IconPeople />
-              <InfoText>{countUsers}</InfoText>
-            </InfoContainer>
-            <InfoContainer>
-              <IconMoney />
-              <InfoText>{getCurrency}</InfoText>
-            </InfoContainer>
-          </ResumeContainer>
-        </HeaderContainer>
+    <>
+      <GenericPage title="Agenda de Churras">
+        <Content>
+          <HeaderContainer>
+            <InfosContainer>
+              <DateTitle>{format(date, 'dd/MM')}</DateTitle>
+              <Title>{title}</Title>
+            </InfosContainer>
+            <ResumeContainer>
+              <InfoContainer>
+                <IconPeople />
+                <InfoText>{countUsers}</InfoText>
+              </InfoContainer>
+              <InfoContainer>
+                <IconMoney />
+                <InfoText>{getCurrency}</InfoText>
+              </InfoContainer>
+            </ResumeContainer>
+          </HeaderContainer>
 
-        <UsersContainer>
-          {partyUsers.map(i => (
-            <UserItem
-              key={i.id}
-              id={i.id}
-              owner_id={ownerId}
-              itsPaid={i.itsPaid}
-              isUserPartyOwner={isOwner}
-              user_id={i.user_id}
-              general_value={i.general_value}
-              drinks_value={i.drinks_value}
-              name={i.name}
-              onStateUpdate={onUserStateUpdate}
-              onDelete={onDelete}
-            />
-          ))}
-        </UsersContainer>
-      </Content>
-    </GenericPage>
+          <UsersContainer>
+            {partyUsers.map(i => (
+              <UserItem
+                key={i.id}
+                id={i.id}
+                name={i.name}
+                owner_id={ownerId}
+                itsPaid={i.itsPaid}
+                user_id={i.user_id}
+                onDelete={onDelete}
+                editUser={setEditingUser}
+                isUserPartyOwner={isOwner}
+                drinks_value={i.drinks_value}
+                general_value={i.general_value}
+                onStateUpdate={onUserStateUpdate}
+              />
+            ))}
+          </UsersContainer>
+        </Content>
+      </GenericPage>
+
+      {editingUser && (
+        <EditUser
+          userName={editingUser.userName}
+          onStateUpdate={onUserStateUpdate}
+          close={() => setEditingUser(null)}
+          partyUserId={editingUser.partyUserId}
+          initialGeneralValue={editingUser.initialGeneralValue}
+          initialDrinksValue={editingUser.initialDrinksValue}
+        />
+      )}
+    </>
   );
 };
 
