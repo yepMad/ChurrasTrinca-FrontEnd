@@ -46,9 +46,8 @@ const Login: React.FC = () => {
             <Button>Entrar</Button>
           </ButtonContainer>
         </InputsContainer>
-
-        <Footer />
       </Content>
+      <Footer />
     </Container>
   );
 };

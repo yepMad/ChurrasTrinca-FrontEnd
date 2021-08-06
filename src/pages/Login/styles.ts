@@ -7,7 +7,7 @@ export const Container = styled.main`
   min-height: 100vh;
 
   display: flex;
-  align-items: stretch;
+  flex-direction: column;
 
   background: rgb(255, 216, 54);
 
