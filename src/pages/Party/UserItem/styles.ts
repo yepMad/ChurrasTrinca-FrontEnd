@@ -19,7 +19,7 @@ export const RightContent = styled.div`
   align-items: center;
 `;
 
-export const CloseButton = styled.button`
+export const DeleteButton = styled.button`
   display: flex;
 
   background: none;

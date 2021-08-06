@@ -13,7 +13,7 @@ import { PartyUser } from '..';
 import {
   Container,
   RightContent,
-  CloseButton,
+  DeleteButton,
   OptionsContainer,
   Circle,
   UserNameText,
@@ -44,14 +44,15 @@ function UserItem(props: Props) {
   } = props;
 
   const { api } = useApi();
-  const { getRequestConfig } = useAuth();
+  const { getRequestConfig, user } = useAuth();
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingPaidStatus, setIsLoadingPaidStatus] = useState(false);
+  const [isLoadingDelete, setIsLoadingDelete] = useState(false);
 
   const updatePaymentStatus = useCallback(
     async (paid: boolean) => {
       try {
-        setIsLoading(true);
+        setIsLoadingPaidStatus(true);
 
         const { data } = await api().put<PartyUser>(
           `/parties/users/${id}`,
@@ -60,13 +61,25 @@ function UserItem(props: Props) {
         );
 
         onStateUpdate(data);
-        setIsLoading(false);
+        setIsLoadingPaidStatus(false);
       } catch (error) {
-        setIsLoading(false);
+        setIsLoadingPaidStatus(false);
       }
     },
     [id, api, getRequestConfig, onStateUpdate],
   );
+
+  const deleteUserParty = useCallback(async () => {
+    try {
+      setIsLoadingDelete(true);
+      console.log(id);
+      await api().delete(`/parties/users/${id}`, getRequestConfig());
+
+      setIsLoadingDelete(false);
+    } catch (error) {
+      setIsLoadingDelete(false);
+    }
+  }, [api, id, getRequestConfig]);
 
   const getGeneralValue = useMemo((): string => {
     return getCurrencyFormatted(general_value);
@@ -83,18 +96,41 @@ function UserItem(props: Props) {
     return `${userNames[0]}${suffix}`;
   }, [name]);
 
+  const deleteIcon = useMemo(() => {
+    if (isUserPartyOwner && user_id === owner_id) {
+      return null;
+    }
+
+    if (!isUserPartyOwner && user_id !== user.id) {
+      return null;
+    }
+
+    if (isLoadingDelete) {
+      return <PuffLoader size={25} />;
+    }
+
+    return (
+      <DeleteButton onClick={() => deleteUserParty()}>
+        <IoCloseCircle size={20} />
+      </DeleteButton>
+    );
+  }, [
+    deleteUserParty,
+    isLoadingDelete,
+    isUserPartyOwner,
+    owner_id,
+    user,
+    user_id,
+  ]);
+
   return (
     <>
       <Container>
         <RightContent>
           <OptionsContainer>
-            {isUserPartyOwner && user_id !== owner_id && (
-              <CloseButton>
-                <IoCloseCircle size={20} />
-              </CloseButton>
-            )}
+            {deleteIcon}
 
-            {isLoading ? (
+            {isLoadingPaidStatus ? (
               <PuffLoader size={25} />
             ) : (
               <Circle
@@ -105,6 +141,7 @@ function UserItem(props: Props) {
           </OptionsContainer>
           <UserNameText>{getUserName}</UserNameText>
         </RightContent>
+
         <LeftContent>
           <PriceContent itsPaid={itsPaid}>
             <IoFastFoodOutline color="#FFD836" size={20} />
@@ -116,6 +153,7 @@ function UserItem(props: Props) {
           </PriceContent>
         </LeftContent>
       </Container>
+
       <Line />
     </>
   );
