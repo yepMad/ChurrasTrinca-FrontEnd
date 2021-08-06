@@ -52,6 +52,7 @@ const PartiesList: React.FC = () => {
         {items.map(item => (
           <ListItem
             key={item.id}
+            partyId={item.id}
             date={item.date_timestamp}
             title={item.title}
             countUsers={item.count_users}

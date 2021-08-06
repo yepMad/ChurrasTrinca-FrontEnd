@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const Container = styled.div`
+export const Container = styled.button`
   display: flex;
   flex: 1;
 
@@ -13,15 +13,20 @@ export const Container = styled.div`
 
   transition: transform 0.2s;
 
+  border: none;
+  text-align: left;
+
   :hover {
     transform: translateY(-10px);
-    cursor: pointer;
   }
 `;
 
 export const Content = styled.div`
   display: flex;
   flex: 1;
+
+  width: 100%;
+  height: 100%;
 
   flex-direction: column;
   justify-content: space-between;

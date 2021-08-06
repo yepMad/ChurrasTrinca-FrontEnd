@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
+import { useHistory } from 'react-router-dom';
 import { format } from 'date-fns';
 
 import {
@@ -18,19 +19,26 @@ import { ReactComponent as IconPeople } from '../../../assets/icon_people.svg';
 import { ReactComponent as IconMoney } from '../../../assets/icon_money.svg';
 
 interface Props {
+  partyId: string;
   date: number;
   title: string;
   countUsers: number;
   totalValue: number;
 }
 
-function ListItem({ date, title, countUsers, totalValue }: Props) {
+function ListItem({ partyId, date, title, countUsers, totalValue }: Props) {
+  const history = useHistory();
+
   const getCurrency = useMemo((): string => {
     return getCurrencyFormatted(totalValue);
   }, [totalValue]);
 
+  const accessParty = useCallback(() => {
+    history.push(`/churrasco/${partyId}`);
+  }, [partyId, history]);
+
   return (
-    <Container>
+    <Container onClick={accessParty}>
       <Content>
         <TopContainer>
           <DateTitle>{format(date, 'dd/MM')}</DateTitle>
